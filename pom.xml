@@ -132,6 +132,40 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>2.0.5.RELEASE</version>
             </plugin>
+            <plugin>
+                <groupId>com.google.cloud.tools</groupId>
+                <artifactId>jib-maven-plugin</artifactId>
+                <version>0.10.0</version>
+                <configuration>
+                    <to>
+                        <image>${project.artifactId}:${project.version}</image>
+                    </to>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.8</version>
+                <executions>
+                    <execution>
+                        <id>cli</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <echo message="compile classpath: ${project.build.finalName}"/>
+                                <concat destfile="${project.build.directory}/${project.artifactId}.sh"
+                                        binary="true">
+                                    <fileset file="${project.basedir}/src/main/script/stub.sh" />
+                                    <fileset file="${project.build.directory}/${project.build.finalName}.jar"/>
+                                </concat>
+                                <chmod file="${project.build.directory}/${project.artifactId}.sh" perm="a+x" />
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
