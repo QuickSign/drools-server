@@ -147,14 +147,14 @@
                 <version>1.8</version>
                 <executions>
                     <execution>
-                        <id>cli</id>
+                        <id>build-script</id>
                         <phase>package</phase>
                         <goals>
                             <goal>run</goal>
                         </goals>
                         <configuration>
                             <target>
-                                <echo message="compile classpath: ${project.build.finalName}"/>
+                                <echo message="Creating shell script"/>
                                 <concat destfile="${project.build.directory}/${project.artifactId}.sh"
                                         binary="true">
                                     <fileset file="${project.basedir}/src/main/script/stub.sh" />
@@ -162,6 +162,43 @@
                                 </concat>
                                 <chmod file="${project.build.directory}/${project.artifactId}.sh" perm="a+x" />
                             </target>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>symlink-script</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <echo message="Copying shell script to ${user.home}/bin/${project.artifactId}"/>
+                                <copy file="${project.build.directory}/${project.artifactId}.sh" tofile="${user.home}/bin/${project.artifactId}"/>
+                                <chmod file="${user.home}/bin/${project.artifactId}" perm="a+x" />
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>3.0.0</version>
+                <executions>
+                    <execution>
+                        <id>attach-script</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>attach-artifact</goal>
+                        </goals>
+                        <configuration>
+                            <artifacts>
+                                <artifact>
+                                    <file>${project.build.directory}/${project.artifactId}.sh</file>
+                                    <type>sh</type>
+                                    <classifier>script</classifier>
+                                </artifact>
+                            </artifacts>
                         </configuration>
                     </execution>
                 </executions>
