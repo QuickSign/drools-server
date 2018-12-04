@@ -14,6 +14,8 @@ This will build the fat jar, the fat shell script and install the script in `~/b
 
 #### Excel sheet `doc/rules/ExamplePolicyPricing.xls`
 
+**IMPORTANT**: The Excel sheet must import in `RuleSet` cell `D2` the model package `io.quicksign.drools.server`.
+
 ![ExamplePolicyPricing.xls](doc/rules-excel.png)
 
 #### Fact types `doc/rules/Types.drl`
@@ -35,6 +37,8 @@ declare Policy
     basePrice : int;
 end
 ```
+
+**IMPORTANT**: The `io.quicksign.drools.server` can be changed be must be matched by the packaged imported in the Excel file. See `RuleSet` cell `D2`.
 
 ### Start the server
 
