@@ -66,7 +66,7 @@ Sample input facts request body :
 Sample output fact type :
 
 ```
-io.quicksign.drools.server.Driver
+io.quicksign.drools.server.Policy
 ```
 
 ![](doc/swagger-demo.png)
