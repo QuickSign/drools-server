@@ -1,0 +1,15 @@
+package io.quicksign.drools.server
+
+declare Driver
+    name : String = "Mr Joe Blogs"
+    age : Integer = new Integer(30)
+    priorClaims : Integer = new Integer(0)
+    locationRiskProfile : String = "LOW"
+end
+
+declare Policy
+    type : String = "COMPREHENSIVE";
+    approved : boolean = false;
+    discountPercent : int = 0;
+    basePrice : int;
+end
