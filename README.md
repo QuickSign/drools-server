@@ -5,8 +5,10 @@
 ### Build
 
 ```
-mvn clean package
+mvn clean install
 ```
+
+This will build the fat jar, the fat shell script and install the script in `~/bin/drools-server`.
 
 ### Sample decision table and types
 
@@ -38,7 +40,8 @@ end
 
 Given the sample decision table and facts are in `doc/rules/` :
 
-- Shell script: `./target/drools-server.sh --drools.folder=$PWD/doc/rules`
+- Installed shell script from `~/bin`: `drools-server --drools.folder=$PWD/doc/rules`
+- Shell script from `./target` dir: `./target/drools-server.sh --drools.folder=$PWD/doc/rules`
 - Executable JAR: `java -Ddrools.folder=$PWD/doc/rules -jar target/drools-server-1.0-SNAPSHOT.jar`
 
 ### Test the rules

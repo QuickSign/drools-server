@@ -5,4 +5,4 @@ ________                      .__             _________
 /_______  /__|   \____/ \____/|____/____  > /_______  /|__|    \_/
         \/                              \/          \/
 
-${AnsiColor.BRIGHT_BLUE}:: Running Drools Server ${application.version} :: \ö/${AnsiColor.BLACK}
+${AnsiColor.BRIGHT_BLUE}:: Running Drools Server ${application.version} :: \ö/${AnsiColor.DEFAULT}
