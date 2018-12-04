@@ -1,6 +1,5 @@
 package io.quicksign.drools.server;
 
-import org.kie.api.KieBase;
 import org.kie.api.KieServices;
 import org.kie.api.builder.KieBuilder;
 import org.kie.api.builder.KieFileSystem;
@@ -8,6 +7,8 @@ import org.kie.api.builder.KieRepository;
 import org.kie.api.io.Resource;
 import org.kie.api.runtime.KieContainer;
 import org.kie.internal.io.ResourceFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,6 +18,8 @@ import java.io.IOException;
 
 @Configuration
 public class DroolsConfiguration {
+
+    private static Logger log = LoggerFactory.getLogger(DroolsConfiguration.class);
 
     @Bean
     public KieContainer kieContainer(KieServices kieServices, KieFileSystem kfs) {
@@ -45,6 +48,7 @@ public class DroolsConfiguration {
         for (final File fileEntry : droolsFolder.listFiles()) {
             if (fileEntry.isFile()) {
                 Resource resource = ResourceFactory.newFileResource(fileEntry);
+                log.info("Loading Drools resource {}", fileEntry);
                 kieFileSystem.write(resource);
             }
         }
