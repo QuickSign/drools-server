@@ -7,8 +7,9 @@
     </encoder>
   </appender>
 
-  <logger name="org.kie" level="info"/>
-  <logger name="org.drools" level="info"/>
+  <!--logger name="org.kie" level="info"/>
+  <logger name="org.drools" level="info"/-->
+  <logger name="io.quicksign.drools.server" level="info"/>
 
   <root level="WARN">
     <appender-ref ref="consoleAppender" />

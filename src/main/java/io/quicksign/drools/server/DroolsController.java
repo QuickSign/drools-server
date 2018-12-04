@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import io.swagger.annotations.*;
 import org.kie.api.KieBase;
 import org.kie.api.definition.type.FactType;
 import org.kie.api.runtime.KieContainer;
@@ -15,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -41,7 +41,14 @@ public class DroolsController {
     }
 
     @PostMapping("/")
-    public ObjectNode execute(@RequestBody ArrayNode input, @RequestParam("outputType") String outputTypeFqn) throws Exception {
+    @ApiOperation(value = "Execute Drools stateless session", notes = "Pass an array of input facts, each fact must define its _type")
+    public ObjectNode execute(
+            @ApiParam(value = "List of typed input facts objects. Each object must define its type using a _typed property", required = true)
+            @RequestBody ArrayNode inputFacts,
+
+            @ApiParam(value = "Output fact type", required = true)
+            @RequestParam(name="outputType") String outputTypeFqn) throws Exception {
+
         StatelessKieSession ksession = kc.newStatelessKieSession();
 
         //now create some test data
@@ -53,7 +60,7 @@ public class DroolsController {
         Object outputFact = outputType.newInstance();
 
         List<Object> facts = new ArrayList<>();
-        for (JsonNode node : input) {
+        for (JsonNode node : inputFacts) {
             JsonNode typeNode = node.get("_type");
             checkNotNull(typeNode, "Missing _type information");
             String type = typeNode.asText();
@@ -88,26 +95,5 @@ public class DroolsController {
         typeName_.typeName = typeName;
         return typeName_;
     }
-
-    @PostMapping("/test")
-    public ObjectNode test() throws Exception {
-        StatelessKieSession ksession = kc.newStatelessKieSession( "default");
-
-        //now create some test data
-        FactType driverType = kc.getKieBase("default").getFactType( "io.quicksign.drools.server",
-                "Driver" );
-        FactType policyType = kc.getKieBase("default").getFactType( "io.quicksign.drools.server",
-                "Policy" );
-        Object driver = driverType.newInstance();
-        Object policy = policyType.newInstance();
-
-        ksession.execute( Arrays.asList( new Object[]{driver, policy} ) );
-
-        Map<String, Object> output = policyType.getAsMap(policy);
-        ObjectNode jsonNode = mapper.convertValue(output, ObjectNode.class);
-        return jsonNode;
-
-    }
-
 
 }

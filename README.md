@@ -38,15 +38,33 @@ end
 
 Given the sample decision table and facts are in `doc/rules/` :
 
-```
-java -Ddrools.folder=$PWD/doc/rules -jar target/drools-server-1.0-SNAPSHOT.jar
-```
+- Shell script: `./target/drools-server.sh --drools.folder=$PWD/doc/rules`
+- Executable JAR: `java -Ddrools.folder=$PWD/doc/rules -jar target/drools-server-1.0-SNAPSHOT.jar`
 
 ### Test the rules
 
 With Swagger UI :
 
 At [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
+
+Sample input facts request body :
+
+```
+[
+    {
+        "_type": "io.quicksign.drools.server.Driver",
+        "age": 30,
+        "priorClaims": 0,
+        "locationRiskProfile": "LOW"
+    }
+]
+```
+
+Sample output fact type :
+
+```
+io.quicksign.drools.server.Driver
+```
 
 ![](doc/swagger-demo.png)
 
