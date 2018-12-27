@@ -73,16 +73,19 @@ public class DroolsController {
             FactType factType = kb.getFactType(typeName.packageName, typeName.typeName);
             checkNotNull(factType, "Unknown input type %s", typeName);
 
-            Object inputFact = factType.newInstance();
+            Class<?> factClass = factType.getFactClass();
+            Object inputFact = mapper.convertValue(result, factClass);
+
+            // convert from string to Date
             factType.setFromMap(inputFact, result);
+
             facts.add(inputFact);
         }
 
         facts.add(outputFact);
 
         ksession.execute( facts );
-        Map<String, Object> outputMap = outputType.getAsMap(outputFact);
-        ObjectNode outputJson = mapper.convertValue(outputMap, ObjectNode.class);
+        ObjectNode outputJson = mapper.convertValue(outputFact, ObjectNode.class);
         return outputJson;
     }
 
