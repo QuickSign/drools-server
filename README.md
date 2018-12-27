@@ -54,7 +54,7 @@ With Swagger UI :
 
 At [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
 
-Sample input facts request body :
+Sample facts request body :
 
 ```
 [
@@ -63,14 +63,11 @@ Sample input facts request body :
         "age": 30,
         "priorClaims": 0,
         "locationRiskProfile": "LOW"
+    },
+    {
+        "_type": "io.quicksign.drools.server.Policy"
     }
 ]
-```
-
-Sample output fact type :
-
-```
-io.quicksign.drools.server.Policy
 ```
 
 ![](doc/swagger-demo.png)
@@ -78,13 +75,27 @@ io.quicksign.drools.server.Policy
 With Curl
 
 ```
-curl -X POST "http://localhost:8080/?outputType=io.quicksign.drools.server.Policy" \
+curl -X POST "http://localhost:8080/" \
 	-H "Content-Type: application/json" \
-	-d "[{ \"_type\": \"io.quicksign.drools.server.Driver\", \"age\": 30, \"priorClaims\": 0, \"locationRiskProfile\": \"LOW\"}]"
+	-d "[{ \"_type\": \"io.quicksign.drools.server.Driver\", \"age\": 30, \"priorClaims\": 0, \"locationRiskProfile\": \"LOW\"}, { \"_type\": \"io.quicksign.drools.server.Policy\" } ]"
 ```
 
 It should return the following :
 
 ```
-{"approved":false,"discountPercent":20,"type":"COMPREHENSIVE","basePrice":120}
+[
+    {
+        "_type": "io.quicksign.drools.server.Driver",
+        "age": 30,
+        "priorClaims": 0,
+        "locationRiskProfile": "LOW"
+    },
+    {
+        "_type": "io.quicksign.drools.server.Policy",
+        "approved": false,
+        "discountPercent": 20,
+        "type": "COMPREHENSIVE",
+        "basePrice": 120
+    }
+]
 ```

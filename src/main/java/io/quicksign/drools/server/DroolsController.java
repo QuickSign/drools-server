@@ -3,6 +3,7 @@ package io.quicksign.drools.server;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.swagger.annotations.*;
 import org.kie.api.KieBase;
@@ -12,7 +13,6 @@ import org.kie.api.runtime.StatelessKieSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
@@ -41,26 +41,17 @@ public class DroolsController {
     }
 
     @PostMapping("/")
-    @ApiOperation(value = "Execute Drools stateless session", notes = "Pass an array of input facts, each fact must define its _type")
-    public ObjectNode execute(
-            @ApiParam(value = "List of typed input facts objects. Each object must define its type using a _typed property", required = true)
-            @RequestBody ArrayNode inputFacts,
-
-            @ApiParam(value = "Output fact type", required = true)
-            @RequestParam(name="outputType") String outputTypeFqn) throws Exception {
+    @ApiOperation(value = "Execute Drools stateless session", notes = "Pass an array of facts, each fact must define its _type")
+    public ArrayNode execute(
+            @ApiParam(value = "List of typed facts objects. Each object must define its type using a _type property", required = true)
+            @RequestBody ArrayNode factNodes) throws Exception {
 
         StatelessKieSession ksession = kc.newStatelessKieSession();
 
-        //now create some test data
-        TypeName outputTypeName = extractTypeName(outputTypeFqn);
         KieBase kb = kc.getKieBase();
-        FactType outputType = kb.getFactType( outputTypeName.packageName, outputTypeName.typeName);
-        checkNotNull(outputType, "Unknown output type %s", outputTypeName);
-
-        Object outputFact = outputType.newInstance();
 
         List<Object> facts = new ArrayList<>();
-        for (JsonNode node : inputFacts) {
+        for (JsonNode node : factNodes) {
             JsonNode typeNode = node.get("_type");
             checkNotNull(typeNode, "Missing _type information");
             String type = typeNode.asText();
@@ -79,10 +70,15 @@ public class DroolsController {
             facts.add(inputFact);
         }
 
-        facts.add(outputFact);
-
         ksession.execute( facts );
-        ObjectNode outputJson = mapper.convertValue(outputFact, ObjectNode.class);
+        ArrayNode outputJson = mapper.createArrayNode();
+        JsonNodeFactory nodeFactory = mapper.getNodeFactory();
+        for (Object fact : facts) {
+            ObjectNode node = mapper.convertValue(fact, ObjectNode.class);
+            node.set("_type", nodeFactory.textNode(fact.getClass().getName()));
+            outputJson.add(node);
+        }
+
         return outputJson;
     }
 
