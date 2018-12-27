@@ -76,9 +76,6 @@ public class DroolsController {
             Class<?> factClass = factType.getFactClass();
             Object inputFact = mapper.convertValue(result, factClass);
 
-            // convert from string to Date
-            factType.setFromMap(inputFact, result);
-
             facts.add(inputFact);
         }
 
