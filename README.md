@@ -14,7 +14,7 @@ This will build the fat jar, the fat shell script and install the script in `~/b
 
 #### Excel sheet `doc/rules/ExamplePolicyPricing.xls`
 
-**IMPORTANT**: The Excel sheet must import in `RuleSet` cell `D2` the model package `io.quicksign.drools.server`.
+**IMPORTANT**: The Excel sheet must import in `RuleSet` cell `D2` the model package `io.quicksign.drools.server`, it should be changed to reflect your company but must match the package exported from `Types.drl` file.
 
 ![ExamplePolicyPricing.xls](doc/rules-excel.png)
 
