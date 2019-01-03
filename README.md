@@ -99,3 +99,42 @@ It should return the following :
     }
 ]
 ```
+
+### Experimental RFC 6902 JSON Patch support
+
+The endpoint URL is `/_diff` :
+
+```
+curl -X POST "http://localhost:8080/_diff" \
+	-H "Content-Type: application/json" \
+	-d "[{ \"_type\": \"io.quicksign.drools.server.Driver\", \"age\": 30, \"priorClaims\": 0, \"locationRiskProfile\": \"LOW\"}, { \"_type\": \"io.quicksign.drools.server.Policy\" } ]"
+```
+
+It should return the following :
+
+```
+[
+  {
+    "op": "add",
+    "path": "/1/approved",
+    "value": false
+  },
+  {
+    "op": "add",
+    "path": "/1/basePrice",
+    "value": 120
+  },
+  {
+    "op": "add",
+    "path": "/1/discountPercent",
+    "value": 20
+  },
+  {
+    "op": "add",
+    "path": "/1/type",
+    "value": "COMPREHENSIVE"
+  }
+]
+```
+
+NB: It is almost as heavy as the normal response so its interest needs to be confirmed.

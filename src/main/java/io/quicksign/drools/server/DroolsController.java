@@ -5,12 +5,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.github.fge.jsonpatch.JsonPatch;
+import com.github.fge.jsonpatch.diff.JsonDiff;
 import io.swagger.annotations.*;
 import org.kie.api.KieBase;
 import org.kie.api.definition.type.FactType;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.StatelessKieSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.MimeType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -40,12 +43,28 @@ public class DroolsController {
         }
     }
 
-    @PostMapping("/")
+    @PostMapping(value = "/", produces = "application/json")
     @ApiOperation(value = "Execute Drools stateless session", notes = "Pass an array of facts, each fact must define its _type")
-    public ArrayNode execute(
+    public JsonNode execute(
             @ApiParam(value = "List of typed facts objects. Each object must define its type using a _type property", required = true)
             @RequestBody ArrayNode factNodes) throws Exception {
 
+        ArrayNode outputJson = doExecute(factNodes);
+        return outputJson;
+    }
+
+    @PostMapping(value = "/_diff", produces = "application/json-patch+json")
+    @ApiOperation(value = "Execute Drools stateless session and returns the facts as a RFC 6902 JSON Patch", notes = "Pass an array of facts, each fact must define its _type")
+    public JsonNode executePatch(
+            @ApiParam(value = "List of typed facts objects. Each object must define its type using a _type property", required = true)
+            @RequestBody ArrayNode factNodes) throws Exception {
+
+        ArrayNode outputJson = doExecute(factNodes);
+        final JsonNode patch = JsonDiff.asJson(factNodes, outputJson);
+        return patch;
+    }
+
+    private ArrayNode doExecute(@ApiParam(value = "List of typed facts objects. Each object must define its type using a _type property", required = true) @RequestBody ArrayNode factNodes) {
         StatelessKieSession ksession = kc.newStatelessKieSession();
 
         KieBase kb = kc.getKieBase();
@@ -78,7 +97,6 @@ public class DroolsController {
             node.set("_type", nodeFactory.textNode(fact.getClass().getName()));
             outputJson.add(node);
         }
-
         return outputJson;
     }
 

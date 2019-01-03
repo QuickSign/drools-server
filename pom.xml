@@ -32,6 +32,11 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            <dependency>
+                <groupId>com.github.fge</groupId>
+                <artifactId>json-patch</artifactId>
+                <version>1.9</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -60,6 +65,10 @@
         <dependency>
             <groupId>org.kie</groupId>
             <artifactId>kie-internal</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.github.fge</groupId>
+            <artifactId>json-patch</artifactId>
         </dependency>
 
 
