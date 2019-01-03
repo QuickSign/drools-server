@@ -137,4 +137,4 @@ It should return the following :
 ]
 ```
 
-NB: It is almost as heavy as the normal response so its interest needs to be confirmed.
+NB: For this example, the JSON Patch uses only 10% less bytes than the plain JSON which is not great but compresses better. The gzip compressed JSON Patch uses 30% less bytes than the gzip compressed plain JSON.
