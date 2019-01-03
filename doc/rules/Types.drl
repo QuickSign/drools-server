@@ -1,8 +1,7 @@
 package io.quicksign.drools.server
 
 declare Driver
-    name : String = "Mr Joe Blogs"
-    age : Integer = new Integer(30)
+    age : Integer
     priorClaims : Integer = new Integer(0)
     locationRiskProfile : String = "LOW"
 end
