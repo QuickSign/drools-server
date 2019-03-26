@@ -14,6 +14,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 
 @Configuration
@@ -45,14 +46,24 @@ public class DroolsConfiguration {
     @Bean
     public KieFileSystem kieFileSystem(KieServices kieServices) throws IOException {
         KieFileSystem kieFileSystem = kieServices.newKieFileSystem();
-        for (final File fileEntry : droolsFolder.listFiles()) {
-            if (fileEntry.isFile()) {
-                Resource resource = ResourceFactory.newFileResource(fileEntry);
-                log.info("Loading Drools resource {}", fileEntry);
-                kieFileSystem.write(resource);
+        loadFilesRecursively(kieFileSystem, droolsFolder);
+        return kieFileSystem;
+    }
+
+    private static void loadFilesRecursively(KieFileSystem kieFileSystem, File file) {
+        if (file.isFile()) {
+            Resource resource = ResourceFactory.newFileResource(file);
+            log.info("Loading Drools resource {}", file);
+            kieFileSystem.write(resource);
+        } else if (file.isDirectory()) {
+            for (final File entry : file.listFiles(filter())) {
+                loadFilesRecursively(kieFileSystem, entry);
             }
         }
-        return kieFileSystem;
+    }
+
+    private static FilenameFilter filter() {
+        return (dir, name) -> !name.startsWith("~");
     }
 
 }
